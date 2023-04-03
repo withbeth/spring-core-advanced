@@ -1,4 +1,4 @@
-package hello.spring.core.adavanced;
+package hello.spring.core.advanced;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
