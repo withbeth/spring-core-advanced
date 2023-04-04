@@ -1,14 +1,14 @@
 package hello.spring.core.advanced.aop.practical;
 
+import hello.spring.core.advanced.aop.practical.aspect.TraceAspect;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
-@SpringBootTest(classes = {
-    SimpleItemService.class,
-    UnstableItemRepository.class
-})
+@SpringBootTest
+@Import(TraceAspect.class)
 class SimpleItemServiceTest {
 
     @Autowired
