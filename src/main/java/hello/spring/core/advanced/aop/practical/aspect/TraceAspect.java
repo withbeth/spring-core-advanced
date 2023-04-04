@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 
 /**
  * @Aspect :
@@ -16,6 +17,7 @@ import org.aspectj.lang.annotation.Before;
  */
 @Slf4j
 @Aspect
+@Order(1)
 public class TraceAspect {
 
     @Before("@annotation(hello.spring.core.advanced.aop.practical.annotation.Trace)")
@@ -23,4 +25,5 @@ public class TraceAspect {
         log.info("[trace] signature={}, args={}",
             joinPoint.getSignature(), joinPoint.getArgs());
     }
+
 }

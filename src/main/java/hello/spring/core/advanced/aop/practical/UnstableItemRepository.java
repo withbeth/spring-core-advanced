@@ -1,6 +1,5 @@
 package hello.spring.core.advanced.aop.practical;
 
-import hello.spring.core.advanced.aop.practical.annotation.Trace;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,6 @@ public class UnstableItemRepository {
         return (counter.incrementAndGet() % 5 == 0);
     }
 
-    @Trace
     public String save(String itemId) {
         if (isTimeToFail()) {
             throw new RuntimeException("알수 없는 런타임 예외 발생. item id = " + itemId);

@@ -1,5 +1,6 @@
 package hello.spring.core.advanced.aop.practical;
 
+import hello.spring.core.advanced.aop.practical.aspect.RetryAspect;
 import hello.spring.core.advanced.aop.practical.aspect.TraceAspect;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 @SpringBootTest
-@Import(TraceAspect.class)
+@Import({TraceAspect.class, RetryAspect.class})
 class SimpleItemServiceTest {
 
     @Autowired

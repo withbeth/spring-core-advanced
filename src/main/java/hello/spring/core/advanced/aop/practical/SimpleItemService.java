@@ -1,5 +1,6 @@
 package hello.spring.core.advanced.aop.practical;
 
+import hello.spring.core.advanced.aop.practical.annotation.Retry;
 import hello.spring.core.advanced.aop.practical.annotation.Trace;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ public class SimpleItemService {
     }
 
     @Trace
+    @Retry
     public String create(String itemId) {
         return itemRepository.save(itemId);
     }
