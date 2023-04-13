@@ -42,11 +42,30 @@ NotYet
 
 ### 주의사항 2: 프록시 기술의 한계
 
-[ 타입 캐스팅 ] 
+[ `JDK Dynamic Proxy`는 구체 클래스로 타입 캐스팅 불가 ] 
 
-[ 의존관계 주입 ] 
+What : 
+- `JDK Dynamic Proxy`는 구체 클래스로 타입 캐스팅 불가. (`ClassCast예외 발생`)
+ 
+Why : 
+- 생각해보면 당연하다, 해당 프록시는 `인터페이스`를 구현한 형태로 프록시를 생성하기에, 
+- 해당 인터페이스를 구현한 다른 구체 클래스에 대한 정보는 알고 있지 못하기 때문.
 
-[ CGLIB ] 
+So what?
+- Q. Proxy를 타입 캐스팅 할 일이 별로 없을텐데 왜 굳이 이런 애기를 하는 걸까?
+- A. 의존관계 주입에 영향을 미친다. 
+
+[ `JDK Dynamic Proxy`는 구체 클래스 타입 주입 불가] 
+
+When : 
+- property : `spring.aop.proxy-target-class=false`
+- DI : `@Autowired MemberServiceImpl memberServiceImpl`
+
+Why :
+- 앞서 타입 캐스팅이 실패하기에 DI 불가능.
+- 반대로 말하면, 구체클래스를 상속하는 형태로 프록시를 생성하는 CGLIB은, 당연히 상위 클래스인 구체클래스로 타입캐스팅이 가능하기에 DI가능.
+
+[ CGLIB의 단점 ] 
 
 [ 스프링의 해결책 ] 
 
@@ -55,3 +74,24 @@ NotYet
 
 Q. Spring AOP는 private method에도 적용 가능할까?
 A. NO. Proxy기반이므로, target 객체의 private method를 애초에 호출할수가 없다(subclass base던, interface base던)
+
+Q. AOP Proxy 생성시, JDK DynamicProxy or CGLIB 선택 가능한데, 각 기법의 단점은?
+- DynamicProxy : Interface필수. Reflection로 인한 성능,보안상 이슈. 구체 클래스로 `TypeCasting` 불가능.
+- CGLIB : 구체클래스 필수. default constructor필요. constructor 두번 호출 이슈.
+  - 해당 생성자 제약 이슈는, `objenesis` 라이브러리 이용해 보완 from Spring4+
+
+Q. 위 단점을 파악했다면, 어떤 프록시를 사용해야 할까?
+- 구체클래스만 존재하는 경우 -> CGLIB 강제 이용
+- 인터페이스만 존재하는 경우 -> You can choose JDK Dynamic Proxy or CGLIB
+
+Q. 그럼 Spring에서는 어떻게 둘 중 하나를 선택할수 있나?
+- 스프링이 프록시 생성시 이용하는 `ProxyFactory`의 `proxyTargetClass` 에 옵션 설정.
+- `false` : JDK Dynamic Proxy FIRST
+- `true` : CGLIB FIRST
+- Spring 4+는 default로 CGLIB FIRST 이용.
+
+Q. 어떤 프록시를 선택할지 property 이용해 설정하고 싶은데 어떻게 하죠?
+- `spring.aop.proxy-target-class={booelan}`
+
+Q. 테스트코드에서 간단하게 프로퍼티 설정하는 방법은 없나요?
+- `@SpringBootTest(properties = {spring.aop.proxy-target-class={booelan}})`
